@@ -1,14 +1,10 @@
 package main
 
-//import "github.com/eawsy/aws-lambda-go-core/service/lambda/runtime"
-
 import (
-	"os"
-	"fmt"
 	"log"
 
-	"github.com/ChimeraCoder/anaconda"
-	"gopkg.in/mgo.v2"
+	"github.com/adamo57/klaka/db"
+	"github.com/adamo57/klaka/twitter"
 )
 
 //Handle is what we will want to call when we invoke the lambda job
@@ -17,28 +13,10 @@ import (
 //}
 
 func main() {
-	session, err := mgo.Dial(":27017")
+	session, err := db.InitDB(":27017")
 	if err != nil {
-		log.Println("error connecting to mongo, make sure you run the mongo instance")
+		log.Fatal("error with the db")
 	}
 
-	session.Ping()
-
-	consumerKey := os.Getenv("TWITTER_CONSUMER_KEY")
-	consumerSecret := os.Getenv("TWITTER_CONSUMER_SECRET")
-	accessToken := os.Getenv("TWITTER_ACCESS_TOKEN")
-	accessTokenSecret := os.Getenv("TWITTER_ACCESS_TOKEN_SECRET")
-
-	anaconda.SetConsumerKey(consumerKey)
-	anaconda.SetConsumerSecret(consumerSecret)
-
-	api := anaconda.NewTwitterApi(accessToken, accessTokenSecret)
-
-	result, err := api.PostTweet("", nil)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	log.Println(result.FullText)
+	twitter := twitter.NewTwitterClient()
 }
