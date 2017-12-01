@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/adamo57/klaka/db"
@@ -15,10 +14,19 @@ import (
 
 //TwitterRecord holds the data for the twitter entries
 type TwitterRecord struct {
-	Twitter map[string]string `bson:"twitter"`
+	Twitter TwitterUser `bson:"twitter"`
+}
+
+//TwitterUser holds the data for the twitter entries
+type TwitterUser struct {
+	OAuthToken       string `bson:"oauth_token"`
+	OAuthTokenSecret string `bson:"oauth_token_secret"`
+	UserID           string `bson:"user_id"`
+	ScreenName       string `bson:"screen_name"`
 }
 
 func main() {
+	//for testing purposes only
 	findList := []string{"adamo57"}
 
 	s, err := db.InitDB(":27017")
@@ -28,17 +36,13 @@ func main() {
 
 	c := s.DB("test").C("twitter")
 
-	var results []TwitterRecord
+	var results TwitterRecord
 
 	//> db.twitter.find({"twitter.screen_name" : "adamo57"})
-
 	for _, value := range findList {
-		err = c.Find(bson.M{"twitter.screen_name": value}).All(&results)
+		err = c.Find(bson.M{"twitter.screen_name": value}).One(&results)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-
-	for k, v := range results {
-		fmt.Println("key:", k, "Value:", v.Twitter["screen_name"])
-	}
-
-	// fmt.Println("Results: ", results)
 }
