@@ -1,5 +1,10 @@
-{
-  "user": {
-    "twitterHandle": "adamo57"
+[  
+  {
+    "twitter" : {
+      "oauth_token" : "token",
+      "oauth_token_secret" : "secretToken",
+      "user_id" : "80085",
+      "screen_name" : "adamo57"
+    }
   }
-}
+]
